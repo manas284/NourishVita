@@ -1,9 +1,17 @@
 import Image from 'next/image';
 import ContactForm from '@/components/contact/contact-form';
 import { Button } from '@/components/ui/button';
-import { Mail, Phone, MessageSquare, MapPin, Instagram, Facebook, Pinterest, Linkedin } from 'lucide-react';
+import { Mail, Phone, MessageSquare, MapPin, Instagram, Facebook, Linkedin } from 'lucide-react'; // Removed Pinterest
 import Link from 'next/link';
 import { Input } from '@/components/ui/input';
+
+// Inline SVG for Pinterest
+const PinterestIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-pinterest">
+    <path d="M12.017 1.987c-5.899 0-8.94 4.036-8.94 8.073 0 3.188 1.94 6.156 4.958 7.084.301.054.444-.131.49-.293.04-.131.24-.979.293-1.189.076-.309.054-.411-.04-.691-.24-.744-.775-2.481-.775-3.385 0-2.967 2.167-5.147 4.866-5.147 2.645 0 4.193 1.974 4.193 4.321 0 2.719-1.676 4.791-3.971 4.791-.989 0-1.724-.811-1.487-1.818.278-1.17.847-2.411.847-3.223 0-.782-.411-1.445-1.272-1.445-.99 0-1.817 1.01-1.817 2.326 0 .857.308 1.783.691 2.336.076.11.087.213.054.32-.11.342-.353 1.43-.444 1.772-.131.5-.589.67-.95.361-1.252-1.085-1.95-3.179-1.95-5.447 0-4.02 2.888-7.431 7.859-7.431 4.14 0 7.278 2.973 7.278 6.873 0 4.202-2.562 7.421-6.17 7.421-1.21 0-2.36-.644-2.76-1.41l-.689 2.623c-.278 1.059-1.02 2.336-1.54 3.061-.01.01-.001 0 0 0z"/>
+  </svg>
+);
+
 
 export default function ContactPage() {
   return (
@@ -102,7 +110,7 @@ export default function ContactPage() {
            <div className="flex justify-center space-x-6 mb-10">
              <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-pink-500 transition-colors"><Instagram size={24} /></a>
              <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-600 transition-colors"><Facebook size={24} /></a>
-             <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-red-600 transition-colors"><Pinterest size={24} /></a>
+             <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-red-600 transition-colors"><PinterestIcon /></a>
              <a href="#" target="_blank" rel="noopener noreferrer" className="text-muted-foreground hover:text-blue-700 transition-colors"><Linkedin size={24} /></a>
            </div>
             <h3 className="font-semibold mb-4">Subscribe to Our Newsletter</h3>
