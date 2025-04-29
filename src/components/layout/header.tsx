@@ -1,8 +1,11 @@
+
+'use client'; // Add this directive
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Search, ShoppingCart, User, Menu, Globe } from 'lucide-react';
+import { Search, ShoppingCart, User, Menu, Globe, LogOut } from 'lucide-react'; // Added LogOut
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +15,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast'; // Added useToast for logout feedback
+import * as React from 'react'; // Added React import
+
 
 const Header = () => {
+   const { toast } = useToast(); // Initialize toast
+   // Mock authentication state - replace with real auth check
+   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+
+   // Mock logout function
+   const handleLogout = () => {
+    console.log("Logout initiated");
+    // TODO: Implement actual logout logic (clear session, tokens, etc.)
+    setIsAuthenticated(false); // Update mock state
+    toast({
+        title: "Logged Out",
+        description: "You have been successfully logged out.",
+    });
+    // TODO: Redirect to home or login page if necessary
+    // router.push('/');
+   }
+
   const navItems = [
     { href: '/', label: 'Home' },
     { href: '/shop', label: 'Shop' },
@@ -72,12 +95,24 @@ const Header = () => {
              <DropdownMenuContent align="end">
               <DropdownMenuLabel>My Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild><Link href="/login">Login</Link></DropdownMenuItem>
-              <DropdownMenuItem asChild><Link href="/signup">Sign Up</Link></DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild><Link href="/account/wishlist">Wishlist</Link></DropdownMenuItem>
-              <DropdownMenuItem asChild><Link href="/account/orders">Order History</Link></DropdownMenuItem>
-              <DropdownMenuItem asChild><Link href="/account/subscriptions">Subscriptions</Link></DropdownMenuItem>
+              {isAuthenticated ? (
+                <>
+                  <DropdownMenuItem asChild><Link href="/account/profile">Profile</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link href="/account/wishlist">Wishlist</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link href="/account/orders">Order History</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link href="/account/subscriptions">Subscriptions</Link></DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Logout
+                  </DropdownMenuItem>
+                </>
+              ) : (
+                 <>
+                    <DropdownMenuItem asChild><Link href="/login">Login</Link></DropdownMenuItem>
+                    <DropdownMenuItem asChild><Link href="/signup">Sign Up</Link></DropdownMenuItem>
+                 </>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
            <Button variant="ghost" size="icon" className="relative">
@@ -117,24 +152,30 @@ const Header = () => {
                   </Link>
                 ))}
                  <Separator className="my-4" />
+                  {/* Account Actions */}
+                  {isAuthenticated ? (
+                    <>
+                       <Link href="/account/profile" className="flex items-center gap-2 text-lg font-medium"><User className="h-5 w-5" />Profile</Link>
+                       <Link href="/account/wishlist" className="flex items-center gap-2 text-lg font-medium">Wishlist</Link>
+                       <Link href="/account/orders" className="flex items-center gap-2 text-lg font-medium">Orders</Link>
+                       <Link href="/account/subscriptions" className="flex items-center gap-2 text-lg font-medium">Subscriptions</Link>
+                        <Separator className="my-4" />
+                         <Button variant="ghost" onClick={handleLogout} className="justify-start gap-2 text-lg font-medium text-destructive hover:text-destructive hover:bg-destructive/10">
+                             <LogOut className="h-5 w-5" /> Logout
+                         </Button>
+                    </>
+                  ) : (
+                    <>
+                        <Link href="/login" className="flex items-center gap-2 text-lg font-medium"><User className="h-5 w-5" />Login</Link>
+                        <Link href="/signup" className="flex items-center gap-2 text-lg font-medium">Sign Up</Link>
+                    </>
+                  )}
+
+                  <Separator className="my-4" />
+                  {/* Language Dropdown */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                       <Button variant="ghost" className="justify-start gap-2">
-                         <User className="h-5 w-5" /> My Account
-                       </Button>
-                    </DropdownMenuTrigger>
-                     <DropdownMenuContent>
-                       <DropdownMenuItem asChild><Link href="/login">Login</Link></DropdownMenuItem>
-                       <DropdownMenuItem asChild><Link href="/signup">Sign Up</Link></DropdownMenuItem>
-                       <DropdownMenuSeparator />
-                       <DropdownMenuItem asChild><Link href="/account/wishlist">Wishlist</Link></DropdownMenuItem>
-                       <DropdownMenuItem asChild><Link href="/account/orders">Order History</Link></DropdownMenuItem>
-                      <DropdownMenuItem asChild><Link href="/account/subscriptions">Subscriptions</Link></DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                       <Button variant="ghost" className="justify-start gap-2">
+                       <Button variant="ghost" className="justify-start gap-2 text-lg font-medium">
                          <Globe className="h-5 w-5" /> Language
                        </Button>
                     </DropdownMenuTrigger>

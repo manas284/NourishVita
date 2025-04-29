@@ -4,20 +4,28 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Search, Tag } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
-// Mock Blog Post Data
+// Mock Blog Post Data with ingredients
 const posts = [
-  { id: 1, title: 'The Ultimate Guide to Chia Seed Puddings', category: 'Recipes', image: 'https://picsum.photos/400/300?random=90', excerpt: 'Learn how to make delicious and healthy chia seed puddings with various toppings.', slug: 'chia-seed-pudding-guide' },
-  { id: 2, title: '5 Surprising Benefits of Goji Berries', category: 'Health Tips', image: 'https://picsum.photos/400/300?random=91', excerpt: 'Discover why these tiny red berries pack a powerful nutritional punch.', slug: 'goji-berry-benefits' },
-  { id: 3, title: 'Our Journey Towards Zero-Waste Packaging', category: 'Sustainability', image: 'https://picsum.photos/400/300?random=92', excerpt: 'Read about our commitment to the planet and our steps towards sustainable packaging.', slug: 'zero-waste-journey' },
-  { id: 4, title: 'How to Build a Balanced Superfood Diet', category: 'Guides', image: 'https://picsum.photos/400/300?random=93', excerpt: 'Expert tips on incorporating superfoods into your daily meals for optimal health.', slug: 'balanced-superfood-diet' },
-   { id: 5, title: 'Energizing Morning Smoothie Recipes', category: 'Recipes', image: 'https://picsum.photos/400/300?random=94', excerpt: 'Kickstart your day with these vibrant and nutrient-dense smoothie ideas.', slug: 'energizing-smoothies' },
-   { id: 6, title: 'Why Organic Matters: Beyond the Label', category: 'Health Tips', image: 'https://picsum.photos/400/300?random=95', excerpt: 'Understand the importance of choosing organic foods for your health and the environment.', slug: 'why-organic-matters' },
+  { id: 1, title: 'The Ultimate Guide to Chia Seed Puddings', category: 'Recipes', image: 'https://picsum.photos/400/300?random=90', excerpt: 'Learn how to make delicious and healthy chia seed puddings with various toppings.', slug: 'chia-seed-pudding-guide', ingredients: ['Chia Seeds', 'Milk', 'Sweetener'] },
+  { id: 2, title: '5 Surprising Benefits of Goji Berries', category: 'Health Tips', image: 'https://picsum.photos/400/300?random=91', excerpt: 'Discover why these tiny red berries pack a powerful nutritional punch.', slug: 'goji-berry-benefits', ingredients: ['Goji Berries'] },
+  { id: 3, title: 'Our Journey Towards Zero-Waste Packaging', category: 'Sustainability', image: 'https://picsum.photos/400/300?random=92', excerpt: 'Read about our commitment to the planet and our steps towards sustainable packaging.', slug: 'zero-waste-journey', ingredients: [] },
+  { id: 4, title: 'How to Build a Balanced Superfood Diet', category: 'Guides', image: 'https://picsum.photos/400/300?random=93', excerpt: 'Expert tips on incorporating superfoods into your daily meals for optimal health.', slug: 'balanced-superfood-diet', ingredients: ['Quinoa', 'Chia Seeds', 'Hemp Seeds', 'Leafy Greens'] },
+   { id: 5, title: 'Energizing Morning Smoothie Recipes', category: 'Recipes', image: 'https://picsum.photos/400/300?random=94', excerpt: 'Kickstart your day with these vibrant and nutrient-dense smoothie ideas.', slug: 'energizing-smoothies', ingredients: ['Spinach', 'Banana', 'Hemp Seeds', 'Goji Berries'] },
+   { id: 6, title: 'Why Organic Matters: Beyond the Label', category: 'Health Tips', image: 'https://picsum.photos/400/300?random=95', excerpt: 'Understand the importance of choosing organic foods for your health and the environment.', slug: 'why-organic-matters', ingredients: [] },
 ];
 
 const categories = ['All', 'Recipes', 'Health Tips', 'Sustainability', 'Guides', 'Trending'];
 
+// Extract unique ingredients for filtering (simple example)
+const allIngredients = [...new Set(posts.flatMap(post => post.ingredients))].sort();
+
 export default function WellnessHubPage() {
+  // TODO: Implement state management for filters
+
   return (
     <div>
       {/* Hero Section */}
@@ -37,50 +45,86 @@ export default function WellnessHubPage() {
 
       {/* Content Grid & Filters */}
       <section className="container py-16 md:py-24">
-        {/* Filters and Search */}
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-12">
-            <div className="flex flex-wrap gap-2">
-                {categories.map(category => (
-                    <Button key={category} variant={category === 'All' ? 'default' : 'outline'} size="sm" className="text-xs md:text-sm">
-                        {category}
-                    </Button>
-                ))}
-            </div>
-            <div className="relative w-full md:w-auto">
-             <Input type="search" placeholder="Search articles..." className="h-9 pr-8 w-full md:w-64" />
+        <div className="flex flex-col lg:flex-row gap-12">
+          {/* Filters Sidebar */}
+          <aside className="lg:w-1/4 xl:w-1/5 lg:sticky top-24 self-start">
+             <h3 className="text-xl font-semibold mb-4 border-b pb-2">Filter Articles</h3>
+             {/* Category Filters */}
+             <div className="mb-6">
+                <h4 className="font-medium mb-3">Categories</h4>
+                 <div className="flex flex-wrap gap-2">
+                    {categories.map(category => (
+                        <Button key={category} variant={category === 'All' ? 'default' : 'outline'} size="sm" className="text-xs md:text-sm">
+                            {category}
+                        </Button>
+                    ))}
+                </div>
+             </div>
+
+              {/* Ingredient Filters */}
+             <Accordion type="single" collapsible className="w-full mb-6" defaultValue='ingredients'>
+              <AccordionItem value="ingredients">
+                <AccordionTrigger className="text-base font-medium">Filter by Ingredient</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-2 pt-2 max-h-60 overflow-y-auto pr-2">
+                    {allIngredients.map((ingredient) => (
+                      <div key={ingredient} className="flex items-center space-x-2">
+                        <Checkbox id={`ing-${ingredient}`} />
+                        <Label htmlFor={`ing-${ingredient}`} className="text-sm font-normal cursor-pointer">
+                          {ingredient}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Search Input */}
+            <div className="relative">
+             <Input type="search" placeholder="Search articles..." className="h-9 pr-8 w-full" />
              <Search className="absolute right-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
            </div>
-        </div>
+          </aside>
 
-        {/* Blog Post Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
-             <Link key={post.id} href={`/wellness-hub/${post.slug}`} passHref>
-               <Card className="overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 h-full flex flex-col group cursor-pointer">
-                <CardHeader className="p-0 relative aspect-video">
-                  <Image
-                    src={post.image}
-                    alt={post.title}
-                    layout="fill"
-                    objectFit="cover"
-                    className="group-hover:scale-105 transition-transform duration-300"
-                  />
-                   <div className="absolute top-2 left-2 bg-primary/80 text-primary-foreground text-xs font-medium px-2 py-1 rounded flex items-center gap-1 backdrop-blur-sm">
-                      <Tag size={12} /> {post.category}
-                   </div>
-                </CardHeader>
-                <CardContent className="p-6 flex-grow">
-                  <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">{post.title}</CardTitle>
-                  <p className="text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>
-                </CardContent>
-                 <CardFooter className="p-6 pt-0">
-                    <span className="text-sm text-primary font-medium group-hover:underline">Read More &rarr;</span>
-                 </CardFooter>
-              </Card>
-              </Link>
-            ))}
+          {/* Blog Post Grid */}
+          <div className="lg:w-3/4 xl:w-4/5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
+                {posts.map((post) => (
+                 <Link key={post.id} href={`/wellness-hub/${post.slug}`} passHref>
+                   <Card className="overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 h-full flex flex-col group cursor-pointer">
+                    <CardHeader className="p-0 relative aspect-video">
+                      <Image
+                        src={post.image}
+                        alt={post.title}
+                        layout="fill"
+                        objectFit="cover"
+                        className="group-hover:scale-105 transition-transform duration-300"
+                      />
+                       <div className="absolute top-2 left-2 bg-primary/80 text-primary-foreground text-xs font-medium px-2 py-1 rounded flex items-center gap-1 backdrop-blur-sm">
+                          <Tag size={12} /> {post.category}
+                       </div>
+                    </CardHeader>
+                    <CardContent className="p-6 flex-grow">
+                      <CardTitle className="text-xl mb-2 group-hover:text-primary transition-colors">{post.title}</CardTitle>
+                      <p className="text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>
+                      {/* Optionally display ingredients */}
+                      {post.ingredients.length > 0 && (
+                         <p className="text-xs text-muted-foreground mt-2 italic">
+                           Ingredients: {post.ingredients.slice(0, 3).join(', ')}{post.ingredients.length > 3 ? '...' : ''}
+                         </p>
+                      )}
+                    </CardContent>
+                     <CardFooter className="p-6 pt-0">
+                        <span className="text-sm text-primary font-medium group-hover:underline">Read More &rarr;</span>
+                     </CardFooter>
+                  </Card>
+                  </Link>
+                ))}
+            </div>
+             {/* TODO: Add Pagination for Blog Posts */}
+          </div>
         </div>
-         {/* TODO: Add Pagination for Blog Posts */}
       </section>
 
       {/* Interactive Tools Teaser - Placeholder */}

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ShoppingCart } from 'lucide-react';
+import { Star, ShoppingCart, RefreshCw } from 'lucide-react'; // Added RefreshCw for subscribe icon
 
 interface Product {
   id: string;
@@ -16,6 +16,7 @@ interface Product {
   benefits?: string[];
   dietary?: string[];
   badges?: string[];
+  isSubscribable?: boolean; // Flag for subscribable products
 }
 
 interface ProductCardProps {
@@ -24,7 +25,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
-     <Card className="overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 h-full flex flex-col group">
+     <Card className="overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 ease-in-out h-full flex flex-col group border border-transparent hover:border-primary/20">
       <CardHeader className="p-0 relative aspect-square overflow-hidden">
         <Link href={`/shop/product/${product.id}`}>
             <Image
@@ -32,16 +33,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               alt={product.name}
               layout="fill"
               objectFit="cover"
-              className="group-hover:scale-105 transition-transform duration-300 ease-in-out"
+              className="group-hover:scale-105 transition-transform duration-500 ease-in-out" // Slightly longer image zoom
             />
+            {/* Micro-animation concept placeholder: seeds falling (visual effect)
+            Could be implemented with CSS animations or a small JS effect on hover,
+            but keeping it simple with scale/shadow for now. */}
         </Link>
          {/* Badges */}
-         <div className="absolute top-2 right-2 flex flex-col gap-1 items-end">
+         <div className="absolute top-2 right-2 flex flex-col gap-1 items-end z-10">
           {product.badges?.map((badge) => (
-            <Badge key={badge} variant={badge === 'New' ? 'destructive' : badge === 'Organic' ? 'default' : 'secondary'} className="text-xs capitalize backdrop-blur-sm bg-opacity-80">
+            <Badge key={badge} variant={badge === 'New' ? 'destructive' : badge === 'Organic' ? 'default' : 'secondary'} className="text-xs capitalize backdrop-blur-sm bg-black/50 text-white border-none shadow-sm">
               {badge}
             </Badge>
           ))}
+           {product.isSubscribable && (
+             <Badge variant="outline" className="text-xs capitalize bg-accent/10 text-accent-foreground border-accent backdrop-blur-sm shadow-sm">
+                <RefreshCw className="mr-1 h-3 w-3" /> Subscribe & Save
+             </Badge>
+          )}
         </div>
       </CardHeader>
       <CardContent className="p-4 flex-grow">
@@ -58,12 +67,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
       </CardContent>
       <CardFooter className="p-4 pt-0">
-        <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+        <Button size="sm" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground group-hover:bg-accent group-hover:text-accent-foreground transition-colors duration-300">
           <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
         </Button>
-        {/* <Button variant="outline" size="sm" className="w-1/3">
-            Quick Add
-        </Button> */}
+        {/* Placeholder for Quick Add animation/functionality */}
       </CardFooter>
     </Card>
   );
