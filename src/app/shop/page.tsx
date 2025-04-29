@@ -1,70 +1,126 @@
+"use client";
+
 import ProductCard from '@/components/shop/product-card';
 import ProductFilters from '@/components/shop/product-filters';
-import Image from 'next/image';
+import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import SuperfoodQuiz from '@/components/shop/superfood-quiz';
-
-// Mock Product Data (Replace with actual API call or database fetch)
-const products = [
-  { id: '1', name: 'Organic Chia Seeds', description: 'Nutrient-dense seeds for smoothies and baking.', price: 12.99, rating: 4.5, image: 'https://picsum.photos/300/300?random=50', category: 'Superfoods', benefits: ['Energy', 'Digestion'], dietary: ['Vegan', 'Gluten-Free', 'Organic'], badges: ['Organic', 'Vegan'], isSubscribable: true },
-  { id: '2', name: 'Goji Berry Bliss', description: 'Antioxidant-rich berries for snacking or teas.', price: 15.49, rating: 4.8, image: 'https://picsum.photos/300/300?random=51', category: 'Superfoods', benefits: ['Immunity', 'Skin Health'], dietary: ['Vegan', 'Gluten-Free', 'Organic'], badges: ['Organic', 'New'], isSubscribable: true },
-  { id: '3', name: 'Quinoa Protein Bars', description: 'High-protein, gluten-free bars for on-the-go.', price: 24.99, rating: 4.2, image: 'https://picsum.photos/300/300?random=52', category: 'Snacks', benefits: ['Energy'], dietary: ['Gluten-Free'], badges: ['Bestseller'], isSubscribable: true },
-  { id: '4', name: 'Superfood Gift Box', description: 'Curated blend of seeds, nuts, and bars.', price: 49.99, rating: 5.0, image: 'https://picsum.photos/300/300?random=53', category: 'Gift Boxes', benefits: ['Immunity', 'Energy'], dietary: ['Vegan Option'], badges: ['Organic', 'Gift'], isSubscribable: false },
-  { id: '5', name: 'Organic Hemp Seeds', description: 'Plant-based protein powerhouse.', price: 14.99, rating: 4.6, image: 'https://picsum.photos/300/300?random=54', category: 'Superfoods', benefits: ['Energy', 'Digestion'], dietary: ['Vegan', 'Gluten-Free', 'Organic'], badges: ['Organic'], isSubscribable: true },
-  { id: '6', name: 'Turmeric Latte Mix', description: 'Warming immunity blend.', price: 18.99, rating: 4.7, image: 'https://picsum.photos/300/300?random=55', category: 'Blends', benefits: ['Immunity'], dietary: ['Vegan', 'Gluten-Free', 'Organic'], badges: ['Organic'], isSubscribable: true },
-  { id: '7', name: 'Activated Charcoal Powder', description: 'Detoxifying food-grade powder.', price: 16.50, rating: 4.3, image: 'https://picsum.photos/300/300?random=56', category: 'Superfoods', benefits: ['Digestion'], dietary: ['Vegan', 'Gluten-Free'], badges: [], isSubscribable: false },
-  { id: '8', name: 'Trail Mix Supreme', description: 'Energy-boosting nuts, seeds, and dried fruit.', price: 19.99, rating: 4.4, image: 'https://picsum.photos/300/300?random=57', category: 'Snacks', benefits: ['Energy'], dietary: [], badges: ['Bestseller'], isSubscribable: false },
-];
+import { Badge } from "@/components/ui/badge"
+import { useEffect, useState } from 'react';
+import { ProductType } from '@/types/product';
 
 export default function ShopPage() {
-  return (
-    <div>
-      {/* Hero Banner */}
-      <section className="relative h-[40vh] bg-gradient-to-r from-green-200 via-lime-100 to-green-200 flex items-center justify-center text-center text-foreground overflow-hidden">
-         <Image
-            src="https://picsum.photos/1920/400?random=40" // Replace with a relevant banner image
-            alt="Superfood Spread"
-            layout="fill"
-            objectFit="cover"
-            className="opacity-30"
-          />
-        <div className="relative z-10 p-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Your Superfood Journey Starts Here</h1>
-          <Button size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground">
-            Browse All Products
-          </Button>
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('http://localhost:3001/api/products');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data: ProductType[] = await response.json();
+        setProducts(data);
+      } catch (error: any) {
+        setError(error.message || 'Failed to fetch products');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <div className="text-center">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">Error: {error}</div>;
+
+   return (
+    <>
+      <div className="container">
+        {/* Breadcrumb */}
+        <div className="text-sm text-gray-500 py-4">
+          Home <span className="mx-2">&gt;</span> Shop
         </div>
-      </section>
-
-      {/* Filters & Product Grid */}
-      <section className="container py-12">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Filters Sidebar */}
-          <aside className="lg:w-1/4 xl:w-1/5 lg:sticky top-24 self-start">
+        <Separator />
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_3fr] gap-12 py-12">
+          {/* Sidebar Filters */}
+          <aside className="hidden lg:block">
             <ProductFilters />
-             <div className="mt-12 p-6 bg-primary/10 rounded-lg text-center border border-primary/20">
-                <h3 className="text-xl font-semibold mb-4 text-primary">Find Your Perfect Superfood</h3>
-                <p className="text-sm mb-6 text-foreground/80">Take our quick quiz to get personalized recommendations!</p>
-                <SuperfoodQuiz />
-            </div>
           </aside>
-
           {/* Product Grid */}
-          <div className="lg:w-3/4 xl:w-4/5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <section>
+            {/* Top Bar */}
+            <div className="flex items-center justify-between mb-8">
+              {/* Results */}
+              <div className="text-sm text-gray-700">
+                Showing 1–12 of 36 products
+              </div>
+              {/* Sort & View */}
+              <div className="flex items-center gap-4">
+                <select className="border border-gray-300 rounded-md p-2 text-sm">
+                  <option value="popularity">Sort by: Popularity</option>
+                  <option value="newest">Newest</option>
+                  <option value="price-asc">Price (Low to High)</option>
+                  <option value="price-desc">Price (High to Low)</option>
+                </select>
+                {/* TODO: Add View Toggle */}
+                <div>
+                  {/* Grid/List icons */}
+                </div>
+              </div>
+            </div>
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-2 gap-6">
               {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                />
               ))}
             </div>
-            {/* TODO: Add Pagination */}
-             <div className="mt-12 text-center">
-                 <Button variant="outline" size="lg">Load More Products</Button>
-             </div>
+            {/* Pagination */}
+            <div className="mt-12 flex justify-center gap-4">
+              <Button variant="outline" size="icon" className="rounded-full">
+                &lt;
+              </Button>
+              <Button variant="outline" className="rounded-md">
+                1
+              </Button>
+              <Button variant="outline" className="rounded-md">
+                2
+              </Button>
+              <Button variant="outline" className="rounded-md">
+                3
+              </Button>
+              <Button variant="outline" className="rounded-md">
+                ...
+              </Button>
+              <Button variant="outline" size="icon" className="rounded-full">
+                &gt;
+              </Button>
+            </div>
+          </section>
+        </div>
+        {/* Promo Banner */}
+        <div className="bg-[#F7F7F7] py-8 px-6 rounded-2xl text-center mt-12 mb-24">
+          <div className="container">
+              <Badge className="bg-green-500 text-white">💚 Special Offer</Badge>
+              <h3 className="text-xl mt-2 font-semibold">Subscribe & Save 10% on every order!</h3>
+              <Button className='mt-4' > Learn More</Button>
           </div>
         </div>
-      </section>
-
-
-    </div>
+        <div className="mt-12 p-6 bg-primary/10 rounded-lg text-center border border-primary/20">
+          <h3 className="text-xl font-semibold mb-4 text-primary">Find Your Perfect Superfood</h3>
+          <p className="text-sm mb-6 text-foreground/80">Take our quick quiz to get personalized recommendations!</p>
+          <SuperfoodQuiz />
+        </div>
+      </div>
+    </>
   );
-}
+};
+

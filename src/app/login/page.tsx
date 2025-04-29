@@ -19,6 +19,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import * as React from "react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   email: z.string().email({
@@ -30,6 +31,7 @@ const formSchema = z.object({
 });
 
 export default function LoginPage() {
+  const router = useRouter();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -41,39 +43,46 @@ export default function LoginPage() {
     },
   });
 
-  // Mock login function
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    console.log("Login attempt:", values);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const response = await fetch('/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
 
-    // TODO: Replace with actual authentication logic
-    // For now, assume login is successful for demonstration
-    const loginSuccess = true; // Replace with actual auth check result
+      const data = await response.json();
 
-    setIsSubmitting(false);
-
-    if (loginSuccess) {
+      if (response.ok) {
         toast({
-            title: "Login Successful!",
-            description: "Welcome back!",
-            variant: "default",
+          title: "Login Successful!",
+          description: data.message || "Welcome back!",
+          variant: "default",
         });
-        // TODO: Redirect user to dashboard or home page
-        // router.push('/dashboard'); // Example using Next.js router if needed
-        form.reset(); // Reset form on success
-    } else {
-        toast({
-            title: "Login Failed",
-            description: "Invalid email or password. Please try again.",
-            variant: "destructive",
-        });
-         // Optionally clear only the password field on failure
-        form.setValue("password", "");
+        // Store the token if the backend sends one
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        router.push('/account'); 
+        form.reset();
+      } else {
+        throw new Error(data.message || "Invalid email or password.");
+      }
+    } catch (error: any) {
+      toast({
+        title: "Login Failed",
+        description: error.message || "An error occurred during login.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
+  
   return (
     <div className="container flex min-h-[calc(100vh-8rem)] items-center justify-center py-12">
         <Card className="w-full max-w-md shadow-lg">

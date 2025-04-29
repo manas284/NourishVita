@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
@@ -43,7 +42,11 @@ const DialogContent = React.forwardRef<
       )}
       {...props}
     >
-      {children}
+      <DialogHeaderComponent>
+        <DialogTitleComponent>Dialog Title</DialogTitleComponent>
+        <DialogDescriptionComponent>Dialog Description</DialogDescriptionComponent>
+        {children}
+      </DialogHeaderComponent>
       <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
@@ -53,7 +56,7 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
-const DialogHeader = ({
+const DialogHeaderComponent = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -65,8 +68,7 @@ const DialogHeader = ({
     {...props}
   />
 )
-DialogHeader.displayName = "DialogHeader"
-
+ 
 const DialogFooter = ({
   className,
   ...props
@@ -81,7 +83,7 @@ const DialogFooter = ({
 )
 DialogFooter.displayName = "DialogFooter"
 
-const DialogTitle = React.forwardRef<
+const DialogTitleComponent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(({ className, ...props }, ref) => (
@@ -94,9 +96,9 @@ const DialogTitle = React.forwardRef<
     {...props}
   />
 ))
-DialogTitle.displayName = DialogPrimitive.Title.displayName
+DialogTitleComponent.displayName = DialogPrimitive.Title.displayName
 
-const DialogDescription = React.forwardRef<
+const DialogDescriptionComponent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Description>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
 >(({ className, ...props }, ref) => (
@@ -106,7 +108,7 @@ const DialogDescription = React.forwardRef<
     {...props}
   />
 ))
-DialogDescription.displayName = DialogPrimitive.Description.displayName
+DialogDescriptionComponent.displayName = DialogPrimitive.Description.displayName
 
 export {
   Dialog,
@@ -115,8 +117,8 @@ export {
   DialogClose,
   DialogTrigger,
   DialogContent,
-  DialogHeader,
+  DialogHeaderComponent as DialogHeader,
   DialogFooter,
-  DialogTitle,
-  DialogDescription,
+  DialogTitleComponent as DialogTitle,
+  DialogDescriptionComponent as DialogDescription,
 }

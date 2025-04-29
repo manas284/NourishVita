@@ -52,34 +52,47 @@ export default function SignupPage() {
     },
   });
 
-  // Mock signup function
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
-    console.log("Signup attempt:", { name: values.name, email: values.email }); // Don't log password
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // TODO: Replace with actual signup logic (e.g., API call to create user)
-    const signupSuccess = true; // Replace with actual result
-
-    setIsSubmitting(false);
-
-    if (signupSuccess) {
+    try {
+        const response = await fetch('/api/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: values.name,
+                email: values.email,
+                password: values.password,
+            }),
+        });
+    
+        const data = await response.json();
+    
+        if (response.ok) {
         toast({
             title: "Account Created!",
             description: "Welcome to NourishVita! Please log in.",
             variant: "default",
         });
-        // TODO: Redirect user to login page or automatically log them in
-        // router.push('/login'); // Example redirect
-        form.reset(); // Reset form on success
-    } else {
+        form.reset();
+        } else {
+            toast({
+                title: "Signup Failed",
+                description: data.message || "Could not create account. Please try again later.",
+                variant: "destructive",
+            });
+        }
+    } catch (error) {
+        console.error("Signup error:", error);
         toast({
             title: "Signup Failed",
             description: "Could not create account. Please try again later.", // Or provide specific error message
             variant: "destructive",
         });
     }
+    setIsSubmitting(false);
+
   }
 
   return (

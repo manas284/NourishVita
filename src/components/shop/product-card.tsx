@@ -1,36 +1,23 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { ProductType } from '@/types/product';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ShoppingCart, RefreshCw } from 'lucide-react'; // Added RefreshCw for subscribe icon
 
-interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  rating: number;
-  image: string;
-  category?: string;
-  benefits?: string[];
-  dietary?: string[];
-  badges?: string[];
-  isSubscribable?: boolean; // Flag for subscribable products
-}
-
 interface ProductCardProps {
-  product: Product;
+  product: ProductType;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
      <Card className="overflow-hidden shadow-sm hover:shadow-xl hover:scale-[1.02] transition-all duration-300 ease-in-out h-full flex flex-col group border border-transparent hover:border-primary/20">
       <CardHeader className="p-0 relative aspect-square overflow-hidden">
-        <Link href={`/shop/product/${product.id}`}>
+        <Link href={`/shop/product/${product?.id}`}>
             <Image
-              src={product.image}
-              alt={product.name}
+              src={product?.image ?? ""}
+              alt={product?.name ?? ""}
               layout="fill"
               objectFit="cover"
               className="group-hover:scale-105 transition-transform duration-500 ease-in-out" // Slightly longer image zoom
@@ -54,15 +41,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         </div>
       </CardHeader>
       <CardContent className="p-4 flex-grow">
-         <Link href={`/shop/product/${product.id}`}>
-            <CardTitle className="text-lg mb-1 group-hover:text-primary transition-colors line-clamp-1">{product.name}</CardTitle>
+         <Link href={`/shop/product/${product?.id}`}>
+            <CardTitle className="text-lg mb-1 group-hover:text-primary transition-colors line-clamp-1">{product?.name}</CardTitle>
         </Link>
-        <CardDescription className="text-sm mb-2 line-clamp-2">{product.description}</CardDescription>
+        <CardDescription className="text-sm mb-2 line-clamp-2">{product?.description}</CardDescription>
         <div className="flex items-center justify-between mt-2">
-           <span className="text-lg font-semibold text-primary">${product.price.toFixed(2)}</span>
+           <span className="text-lg font-semibold text-primary">${product?.price?.toFixed(2)}</span>
            <div className="flex items-center gap-1">
             <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
-            <span className="text-sm text-muted-foreground">{product.rating.toFixed(1)}</span>
+            <span className="text-sm text-muted-foreground">{product?.rating?.toFixed(1)}</span>
           </div>
         </div>
       </CardContent>
