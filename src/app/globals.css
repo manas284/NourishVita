@@ -79,7 +79,11 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-geist-sans), sans-serif; /* Ensure font is applied */
+    font-family: var(--font-geist-sans), sans-serif; /* Apply Geist Sans */
+  }
+  /* Apply Geist Mono to code blocks or specific elements if needed */
+  pre, code, kbd, samp {
+     font-family: var(--font-geist-mono), monospace;
   }
   h1, h2, h3, h4, h5, h6 {
      @apply font-semibold tracking-tight;
